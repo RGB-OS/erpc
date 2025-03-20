@@ -1,0 +1,326 @@
+logLevel: warn
+database:
+  evmJsonRpcCache:
+    connectors: 
+      - id: memory
+        driver: memory
+    policies:
+      - network: "*"
+        method: "*"
+        finality: finalized
+        empty: allow
+        connector: memory
+        ttl: 0
+  #  Cache is disabled by default. You can also disable it by uncommenting the following line
+  #  evmJsonRpcCache: ~ 
+server:
+  httpHostV4: 0.0.0.0
+  httpPort: 4000
+  maxTimeout: 50s
+metrics:
+  enabled: true
+  hostV4: 0.0.0.0
+  port: 4001
+projects:
+  - id: main
+    auth:
+      strategies:
+      # Define a simple secret token for authentication of this project:
+      - type: secret
+        rateLimitBudget: starter-budget
+        secret:
+          value: "553f841488c89062a60b6b620c6759310b386757cd2260af6f4f2f99da2b1842"
+    networks:
+      - architecture: evm
+        evm:
+          chainId: 1
+        failsafe:
+          timeout:
+            duration: 30s
+          retry:
+            maxAttempts: 5
+            delay: 500ms
+            backoffMaxDelay: 10s
+            backoffFactor: 0.3
+            jitter: 200ms
+          hedge:
+            delay: 1000ms
+            maxCount: 2
+    upstreams:
+      - id: strata_devnet
+        type: evm
+        endpoint: "https://stratareth3666f0713.devnet-annapurna.stratabtc.org"
+        evm:
+          chainId: 8091
+      - id: citrea_testnet
+        type: evm
+        endpoint: "https://rpc.testnet.citrea.xyz"
+        evm:
+          chainId: 5115
+      # - id: rsk_mainnet
+      #   type: evm
+      #   endpoint: "https://public-node.rsk.co"
+      #   evm:
+      #     chainId: 30
+      - id: bitlayer_mainnet
+        type: evm
+        endpoint: "https://rpc.bitlayer.org"
+        evm:
+          chainId: 200901
+      - id: bitlayer_testnet
+        type: evm
+        endpoint: "https://testnet-rpc.bitlayer.org"
+        evm:
+          chainId: 200810
+      - id: bsquared
+        type: evm
+        endpoint: "https://mainnet.b2-rpc.com"
+        evm:
+          chainId: 223
+      - id: goat_testnet
+        type: evm
+        endpoint: "https://rpc.testnet3.goat.network"
+        evm:
+          chainId: 48816
+      # - id: zulu_mainnet
+      #   type: evm
+      #   endpoint: "https://rpc.zulunetwork.io"
+      #   evm:
+      #     chainId: 20240111
+      # - id: zulu_testnet
+      #   type: evm
+      #   endpoint: "https://rpc-testnet.zulunetwork.io"
+      #   evm:
+      #     chainId: 20240110
+      # - id: merlin_mainnet
+      #   type: evm
+      #   endpoint: "https://rpc.merlinchain.io"
+      #   evm:
+      #     chainId: 4200
+      # - id: merlin_testnet
+      #   type: evm
+      #   endpoint: "https://testnet-rpc.merlinchain.io"
+      #   evm:
+      #     chainId: 686868
+      # - id: rootstock_testnet
+      #   type: evm
+      #   endpoint: "https://public-node.testnet.rsk.co"
+      #   evm:
+      #     chainId: 31
+      # - id: rootstock_mainnet
+      #   type: evm
+      #   endpoint: "https://public-node.rsk.co"
+      #   evm:
+      #     chainId: 30
+rateLimiters:
+  budgets:
+    - id: starter-budget
+      rules:
+        - method: 'eth_accounts'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_blockNumber'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_chainId'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_syncing'
+          maxCount: 60
+          period: 1s
+        - method: 'net_listening'
+          maxCount: 60
+          period: 1s
+        - method: 'net_version'
+          maxCount: 60
+          period: 1s
+        - method: 'web3_clientVersion'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_subscribe'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_uninstallFilter'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_unsubscribe'
+          maxCount: 30
+          period: 1s
+        - method: 'web3_sha3'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_signTransaction'
+          maxCount: 30
+          period: 1s
+        - method: 'net_peerCount'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_gasPrice'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getBalance'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getBlockByNumber'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getCode'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getStorageAt'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getTransactionByHash'
+          maxCount: 20
+          period: 1s
+        - method: 'debug_traceBlockByNumber'
+          maxCount: 10
+          period: 1m
+        - method: 'debug_traceBlockByHash'
+          maxCount: 10
+          period: 1m
+        - method: '*'
+          maxCount: 100
+          period: 1s
+    - id: growth-budget
+      rules:
+          - method: 'eth_accounts'
+            maxCount: 140
+            period: 1s
+          - method: 'eth_blockNumber'
+            maxCount: 140
+            period: 1s
+          - method: 'eth_chainId'
+            maxCount: 140
+            period: 1s
+          - method: 'eth_syncing'
+            maxCount: 140
+            period: 1s
+          - method: 'net_listening'
+            maxCount: 140
+            period: 1s
+          - method: 'net_version'
+            maxCount: 140
+            period: 1s
+          - method: 'web3_clientVersion'
+            maxCount: 140
+            period: 1s
+          - method: 'eth_subscribe'
+            maxCount: 70
+            period: 1s
+          - method: 'eth_uninstallFilter'
+            maxCount: 70
+            period: 1s
+          - method: 'eth_unsubscribe'
+            maxCount: 70
+            period: 1s
+          - method: 'web3_sha3'
+            maxCount: 70
+            period: 1s
+          - method: 'eth_signTransaction'
+            maxCount: 70
+            period: 1s
+          - method: 'net_peerCount'
+            maxCount: 70
+            period: 1s
+          - method: 'eth_gasPrice'
+            maxCount: 46
+            period: 1s
+          - method: 'eth_getBalance'
+            maxCount: 46
+            period: 1s
+          - method: 'eth_getBlockByNumber'
+            maxCount: 46
+            period: 1s
+          - method: 'eth_getCode'
+            maxCount: 46
+            period: 1s
+          - method: 'eth_getStorageAt'
+            maxCount: 46
+            period: 1s
+          - method: 'eth_getTransactionByHash'
+            maxCount: 46
+            period: 1s
+          - method: 'debug_traceBlockByNumber'
+            maxCount: 17
+            period: 1m
+          - method: 'debug_traceBlockByHash'
+            maxCount: 17
+            period: 1m
+          - method: 'debug_traceTransaction'
+            maxCount: 2
+            period: 1m
+          - method: 'debug_traceCall'
+            maxCount: 2
+            period: 1m
+          - method: '*'
+            maxCount: 150
+            period: 1s
+    - id: team-budget
+      rules:
+        - method: 'eth_accounts'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_blockNumber'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_chainId'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_syncing'
+          maxCount: 60
+          period: 1s
+        - method: 'net_listening'
+          maxCount: 60
+          period: 1s
+        - method: 'net_version'
+          maxCount: 60
+          period: 1s
+        - method: 'web3_clientVersion'
+          maxCount: 60
+          period: 1s
+        - method: 'eth_subscribe'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_uninstallFilter'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_unsubscribe'
+          maxCount: 30
+          period: 1s
+        - method: 'web3_sha3'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_signTransaction'
+          maxCount: 30
+          period: 1s
+        - method: 'net_peerCount'
+          maxCount: 30
+          period: 1s
+        - method: 'eth_gasPrice'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getBalance'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getBlockByNumber'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getCode'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getStorageAt'
+          maxCount: 20
+          period: 1s
+        - method: 'eth_getTransactionByHash'
+          maxCount: 20
+          period: 1s
+        - method: 'debug_traceBlockByNumber'
+          maxCount: 10
+          period: 1m
+        - method: 'debug_traceBlockByHash'
+          maxCount: 10
+          period: 1m
+        - method: '*'
+          maxCount: 300
+          period: 1s
