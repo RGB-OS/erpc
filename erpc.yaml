@@ -82,6 +82,16 @@ projects:
         endpoint: "https://rpc.testnet3.goat.network"
         evm:
           chainId: 48816
+      - id: core_testnet
+        type: evm
+        endpoint: "https://rpc.test.btcs.network"
+        evm:
+          chainId: 1115
+      - id: core_mainnet
+        type: evm
+        endpoint: "https://rpc.coredao.org"
+        evm:
+          chainId: 1116
       # - id: zulu_mainnet
       #   type: evm
       #   endpoint: "https://rpc.zulunetwork.io"
